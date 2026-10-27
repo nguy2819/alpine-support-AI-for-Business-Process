@@ -1,0 +1,202 @@
+[
+  {
+    "order_id": "AO-10001",
+    "customer_name": "Maya Chen",
+    "customer_email": "maya.chen@example.com",
+    "order_date": "2026-10-06",
+    "status": "delivered",
+    "delivery_date": "2026-10-10",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "ALP-DP35", "name": "Alpine Trail 35L Daypack", "brand": "Alpine", "category": "packs", "unit_price": 89.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 89.00
+  },
+  {
+    "order_id": "AO-10002",
+    "customer_name": "Jordan Reyes",
+    "customer_email": "jordan.reyes@example.com",
+    "order_date": "2026-10-01",
+    "status": "delivered",
+    "delivery_date": "2026-10-05",
+    "payment_method": "paypal",
+    "items": [
+      {"sku": "RDG-TNT2", "name": "Ridgeline Summit Pro 2-Person Tent", "brand": "Ridgeline", "category": "tents", "unit_price": 349.00, "quantity": 1, "warranty_months": 12, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 349.00
+  },
+  {
+    "order_id": "AO-10003",
+    "customer_name": "Priya Natarajan",
+    "customer_email": "priya.n@example.com",
+    "order_date": "2026-08-27",
+    "status": "delivered",
+    "delivery_date": "2026-09-01",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "ALP-MBL-W", "name": "Alpine Merino Base Layer Top (Women's M)", "brand": "Alpine", "category": "apparel", "unit_price": 65.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false},
+      {"sku": "TRK-POLE", "name": "Trekline Carbon Trekking Poles (pair)", "brand": "Trekline", "category": "hiking", "unit_price": 120.00, "quantity": 1, "warranty_months": 12, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 185.00
+  },
+  {
+    "order_id": "AO-10004",
+    "customer_name": "Liam O'Connor",
+    "customer_email": "liam.oconnor@example.com",
+    "order_date": "2025-03-10",
+    "status": "delivered",
+    "delivery_date": "2025-03-15",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "ALP-DJK-M", "name": "Alpine Ridge Down Jacket (Men's L)", "brand": "Alpine", "category": "apparel", "unit_price": 279.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 279.00
+  },
+  {
+    "order_id": "AO-10005",
+    "customer_name": "Sofia Rossi",
+    "customer_email": "sofia.rossi@example.com",
+    "order_date": "2024-08-15",
+    "status": "delivered",
+    "delivery_date": "2024-08-20",
+    "payment_method": "debit_card",
+    "items": [
+      {"sku": "GRN-HB39", "name": "Granite Peak Hiking Boots (EU 39)", "brand": "Granite Peak", "category": "footwear", "unit_price": 185.00, "quantity": 1, "warranty_months": 12, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 185.00
+  },
+  {
+    "order_id": "AO-10006",
+    "customer_name": "Ethan Brooks",
+    "customer_email": "ethan.brooks@example.com",
+    "order_date": "2026-10-16",
+    "status": "delivered",
+    "delivery_date": "2026-10-20",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "BLZ-STV", "name": "Blaze Compact Camp Stove", "brand": "Blaze", "category": "cooking", "unit_price": 79.00, "quantity": 1, "warranty_months": 12, "final_sale": false, "consumable": false, "safety_critical": false},
+      {"sku": "BLZ-FUEL230", "name": "Blaze Isobutane Fuel Canister 230g", "brand": "Blaze", "category": "cooking", "unit_price": 6.99, "quantity": 4, "warranty_months": 0, "final_sale": false, "consumable": true, "safety_critical": false}
+    ],
+    "total": 106.96
+  },
+  {
+    "order_id": "AO-10007",
+    "customer_name": "Hannah Kim",
+    "customer_email": "hannah.kim@example.com",
+    "order_date": "2026-10-18",
+    "status": "delivered",
+    "delivery_date": "2026-10-22",
+    "payment_method": "apple_pay",
+    "items": [
+      {"sku": "ALP-SB20", "name": "Alpine Nightfall 20F Sleeping Bag", "brand": "Alpine", "category": "sleep", "unit_price": 159.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false},
+      {"sku": "CLR-PAD", "name": "Cloudrest Insulated Sleeping Pad", "brand": "Cloudrest", "category": "sleep", "unit_price": 99.00, "quantity": 1, "warranty_months": 12, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 258.00
+  },
+  {
+    "order_id": "AO-10008",
+    "customer_name": "Marcus Webb",
+    "customer_email": "marcus.webb@example.com",
+    "order_date": "2026-10-14",
+    "status": "delivered",
+    "delivery_date": "2026-10-18",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "ALP-RJ-M-BLU", "name": "Alpine Stormline Rain Jacket (Men's M, Blue)", "brand": "Alpine", "category": "apparel", "unit_price": 149.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 149.00
+  },
+  {
+    "order_id": "AO-10009",
+    "customer_name": "Aisha Bello",
+    "customer_email": "aisha.bello@example.com",
+    "order_date": "2026-10-08",
+    "status": "delivered",
+    "delivery_date": "2026-10-12",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "LMN-HL300-CL", "name": "Lumen 300 Headlamp (Clearance)", "brand": "Lumen", "category": "lighting", "unit_price": 29.00, "quantity": 1, "warranty_months": 12, "final_sale": true, "consumable": false, "safety_critical": false}
+    ],
+    "total": 29.00
+  },
+  {
+    "order_id": "AO-10010",
+    "customer_name": "Tom Fischer",
+    "customer_email": "tom.fischer@example.com",
+    "order_date": "2026-09-26",
+    "status": "delivered",
+    "delivery_date": "2026-10-01",
+    "payment_method": "paypal",
+    "items": [
+      {"sku": "AQP-FLT", "name": "AquaPure Squeeze Water Filter", "brand": "AquaPure", "category": "water", "unit_price": 45.00, "quantity": 1, "warranty_months": 12, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 45.00
+  },
+  {
+    "order_id": "AO-10011",
+    "customer_name": "Grace Liu",
+    "customer_email": "grace.liu@example.com",
+    "order_date": "2026-10-11",
+    "status": "delivered",
+    "delivery_date": "2026-10-15",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "VCT-GPS", "name": "Vector Trail GPS Watch", "brand": "Vector", "category": "electronics", "unit_price": 429.00, "quantity": 1, "warranty_months": 12, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 429.00
+  },
+  {
+    "order_id": "AO-10012",
+    "customer_name": "Daniel Park",
+    "customer_email": "daniel.park@example.com",
+    "order_date": "2026-10-10",
+    "status": "delivered",
+    "delivery_date": "2026-10-14",
+    "payment_method": "debit_card",
+    "items": [
+      {"sku": "ALP-KDP18", "name": "Alpine Junior 18L Kids' Backpack", "brand": "Alpine", "category": "packs", "unit_price": 49.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false},
+      {"sku": "TRF-MEAL", "name": "TrailFeast Freeze-Dried Meal (assorted)", "brand": "TrailFeast", "category": "food", "unit_price": 11.50, "quantity": 6, "warranty_months": 0, "final_sale": false, "consumable": true, "safety_critical": false}
+    ],
+    "total": 118.00
+  },
+  {
+    "order_id": "AO-10013",
+    "customer_name": "Olivia Martin",
+    "customer_email": "olivia.martin@example.com",
+    "order_date": "2026-10-22",
+    "status": "in_transit",
+    "delivery_date": null,
+    "estimated_delivery_date": "2026-10-28",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "ALP-FLC-W-S", "name": "Alpine Polar Fleece Jacket (Women's S)", "brand": "Alpine", "category": "apparel", "unit_price": 99.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 99.00
+  },
+  {
+    "order_id": "AO-10014",
+    "customer_name": "Noah Patel",
+    "customer_email": "noah.patel@example.com",
+    "order_date": "2026-06-05",
+    "status": "delivered",
+    "delivery_date": "2026-06-10",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "ALP-HRN-M", "name": "Alpine Crag Climbing Harness (M)", "brand": "Alpine", "category": "climbing", "unit_price": 75.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": true}
+    ],
+    "total": 75.00
+  },
+  {
+    "order_id": "AO-10015",
+    "customer_name": "Ava Johnson",
+    "customer_email": "ava.johnson@example.com",
+    "order_date": "2026-09-22",
+    "status": "delivered",
+    "delivery_date": "2026-09-26",
+    "payment_method": "credit_card",
+    "items": [
+      {"sku": "ALP-BTL1L", "name": "Alpine Insulated Bottle 1L", "brand": "Alpine", "category": "water", "unit_price": 35.00, "quantity": 1, "warranty_months": 24, "final_sale": false, "consumable": false, "safety_critical": false}
+    ],
+    "total": 35.00
+  }
+]
