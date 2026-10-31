@@ -7,12 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:rules": "tsx scripts/test-rules.ts"
+    "test:rules": "tsx scripts/test-rules.ts",
+    "eval:manual": "tsx scripts/eval-manual.ts"
   },
   "dependencies": {
     "next": "16.4.3",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

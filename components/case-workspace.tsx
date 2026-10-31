@@ -3,13 +3,22 @@
 import { useState } from "react";
 import { POLICY_CLAUSES } from "@/lib/policy";
 import type { RulesResult } from "@/lib/rules";
+import type { ScoredCase } from "@/lib/manualEval";
 import type { Decision, Extraction, Order, TestCase } from "@/lib/types";
 
 export interface CaseView {
   testCase: TestCase;
   order: Order | null;
+  /** Drives the rules: the AI extraction if valid, else the answer key. */
   extraction: Extraction;
+  reference: Extraction;
+  ai: ScoredCase | null;
   rules: RulesResult;
+}
+
+export interface RunViews {
+  label: string | null;
+  views: CaseView[];
 }
 
 type ReviewStatus = "pending" | "editing" | "approved" | "escalated";
@@ -67,7 +76,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-export function CaseWorkspace({ cases }: { cases: CaseView[] }) {
+export function CaseWorkspace({ runs }: { runs: RunViews[] }) {
+  const [runIndex, setRunIndex] = useState(0);
+  const run = runs[runIndex] ?? runs[0];
+  const cases = run.views;
   const [selectedId, setSelectedId] = useState(cases[0]?.testCase.case_id);
   const [statuses, setStatuses] = useState<Record<string, ReviewStatus>>({});
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -106,6 +118,9 @@ export function CaseWorkspace({ cases }: { cases: CaseView[] }) {
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-mono text-xs font-semibold text-slate-700">{cid}</span>
                     <div className="flex items-center gap-1.5">
+                      {c.ai && (!c.ai.decisionCorrect || !c.ai.escalateCorrect) && (
+                        <span className="h-2 w-2 rounded-full bg-rose-600" title="AI pipeline got this case wrong" />
+                      )}
                       {c.rules.escalate && (
                         <span className="h-2 w-2 rounded-full bg-amber-500" title="Needs escalation" />
                       )}
@@ -135,6 +150,22 @@ export function CaseWorkspace({ cases }: { cases: CaseView[] }) {
               {current.testCase.customer_email} · received {current.testCase.received_date}
             </p>
           </div>
+          {runs.length > 1 && (
+            <label className="flex items-center gap-2 text-sm text-slate-600">
+              AI run
+              <select
+                value={runIndex}
+                onChange={(e) => setRunIndex(Number(e.target.value))}
+                className="rounded-md border border-slate-300 bg-white px-2 py-1 font-mono text-xs"
+              >
+                {runs.map((r, i) => (
+                  <option key={r.label} value={i}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
 
         <Card title="Customer message">
@@ -143,12 +174,18 @@ export function CaseWorkspace({ cases }: { cases: CaseView[] }) {
 
         <div className="grid gap-4 xl:grid-cols-2">
           <OrderCard view={current} />
-          <ExtractionCard extraction={current.extraction} />
+          <ExtractionCard view={current} label={run.label} />
         </div>
 
+        {!current.ai?.extraction && (
+          <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            No valid AI extraction for this case, so the decision below comes from the answer key, not from the AI.
+          </p>
+        )}
+
         <div className="grid gap-4 xl:grid-cols-2">
-          <DecisionCard rules={current.rules} />
-          <EscalationCard rules={current.rules} />
+          <DecisionCard view={current} />
+          <EscalationCard view={current} />
         </div>
 
         <Card
@@ -263,40 +300,87 @@ function OrderCard({ view }: { view: CaseView }) {
   );
 }
 
-function ExtractionCard({ extraction: ex }: { extraction: Extraction }) {
-  const flags = [
-    ex.requests_exception && "requests exception",
-    ex.legal_or_chargeback_threat && "legal / chargeback threat",
-    ex.safety_issue && "safety issue",
-  ].filter(Boolean);
+const yesNo = (b: boolean) => (b ? "yes" : "no");
+
+const EXTRACTION_ROWS: { key: keyof Extraction; label: string; show: (e: Extraction) => string; mono?: boolean }[] = [
+  { key: "order_id", label: "Order ID", show: (e) => e.order_id ?? "—", mono: true },
+  { key: "affected_sku", label: "Affected SKU", show: (e) => e.affected_sku ?? "—", mono: true },
+  { key: "issue_type", label: "Issue type", show: (e) => humanize(e.issue_type) },
+  { key: "desired_outcome", label: "Desired outcome", show: (e) => humanize(e.desired_outcome) },
+  { key: "sentiment", label: "Sentiment", show: (e) => e.sentiment },
+  { key: "confidence", label: "Confidence", show: (e) => e.confidence.toFixed(2) },
+  { key: "item_condition", label: "Item condition", show: (e) => e.item_condition },
+  { key: "damage_cause", label: "Damage cause", show: (e) => e.damage_cause },
+  { key: "requests_exception", label: "Requests exception", show: (e) => yesNo(e.requests_exception) },
+  { key: "legal_or_chargeback_threat", label: "Legal / chargeback", show: (e) => yesNo(e.legal_or_chargeback_threat) },
+  { key: "safety_issue", label: "Safety issue", show: (e) => yesNo(e.safety_issue) },
+];
+
+function ExtractionCard({ view, label }: { view: CaseView; label: string | null }) {
+  const { ai, reference } = view;
+  const ex = ai?.extraction ?? null;
+  const wrong = ai?.wrongFields ?? [];
+
   return (
     <Card
       title="Extraction"
-      aside={<Badge className="bg-violet-100 text-violet-800">AI extraction – coming next</Badge>}
+      aside={
+        !label ? (
+          <Badge className="bg-slate-100 text-slate-600">no AI run yet</Badge>
+        ) : !ex ? (
+          <Badge className="bg-rose-100 text-rose-800">{label} · failed</Badge>
+        ) : (
+          <Badge className={wrong.length ? "bg-rose-100 text-rose-800" : "bg-emerald-100 text-emerald-800"}>
+            {label} · {wrong.length ? `${wrong.length} wrong` : "all correct"}
+          </Badge>
+        )
+      }
     >
-      <p className="mb-2 text-xs text-slate-500">Showing the answer-key values until the LLM step is connected.</p>
-      <dl>
-        <Field label="Order ID">
-          <span className="font-mono">{ex.order_id ?? "—"}</span>
-        </Field>
-        <Field label="Affected SKU">
-          <span className="font-mono">{ex.affected_sku ?? "—"}</span>
-        </Field>
-        <Field label="Issue type">{humanize(ex.issue_type)}</Field>
-        <Field label="Desired outcome">{humanize(ex.desired_outcome)}</Field>
-        <Field label="Sentiment">{ex.sentiment}</Field>
-        <Field label="Confidence">
-          <span className={ex.confidence < 0.7 ? "text-amber-700" : ""}>{ex.confidence.toFixed(2)}</span>
-        </Field>
-        <Field label="Item condition">{ex.item_condition}</Field>
-        <Field label="Damage cause">{ex.damage_cause}</Field>
-        <Field label="Flags">{flags.length ? flags.join(", ") : "none"}</Field>
-      </dl>
+      {ai?.error && <p className="mb-2 text-sm text-rose-700">{ai.error}</p>}
+      {ai?.hallucinations.map((h) => (
+        <p key={h} className="mb-2 rounded-md bg-rose-50 px-2 py-1 text-sm text-rose-800">
+          Hallucination: {h}
+        </p>
+      ))}
+      <table className="w-full text-sm">
+        <thead className="text-left text-xs tracking-wide text-slate-500 uppercase">
+          <tr>
+            <th className="py-1 pr-3 font-medium">Field</th>
+            <th className="py-1 pr-3 font-medium">AI output</th>
+            <th className="py-1 font-medium">Answer key</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {EXTRACTION_ROWS.map((row) => {
+            const isWrong = wrong.includes(row.key);
+            const mono = row.mono ? "font-mono text-xs" : "";
+            return (
+              <tr key={row.key} className={isWrong ? "bg-rose-50" : ""}>
+                <td className="py-1 pr-3 text-slate-500">{row.label}</td>
+                <td className={`py-1 pr-3 ${mono} ${isWrong ? "font-semibold text-rose-700" : "text-slate-900"}`}>
+                  {ex ? row.show(ex) : "—"}
+                </td>
+                <td className={`py-1 text-slate-600 ${mono}`}>{row.show(reference)}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </Card>
   );
 }
 
-function DecisionCard({ rules }: { rules: RulesResult }) {
+function AnswerKeyLine({ show, ok, expected }: { show: boolean; ok: boolean; expected: string }) {
+  if (!show) return null;
+  return (
+    <p className={`mt-2 text-sm ${ok ? "text-slate-500" : "font-semibold text-rose-700"}`}>
+      {ok ? "Matches the answer key" : "Wrong. Answer key"}: {expected}
+    </p>
+  );
+}
+
+function DecisionCard({ view }: { view: CaseView }) {
+  const { rules, ai, testCase } = view;
   return (
     <Card title="Rules decision" aside={<span className="text-xs text-slate-400">deterministic · no LLM</span>}>
       <span
@@ -306,6 +390,11 @@ function DecisionCard({ rules }: { rules: RulesResult }) {
       >
         {humanize(rules.decision)}
       </span>
+      <AnswerKeyLine
+        show={!!ai?.extraction}
+        ok={!!ai?.decisionCorrect}
+        expected={humanize(testCase.expected.decision)}
+      />
       <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-800">
         {rules.reasons.map((r) => (
           <li key={r}>{r}</li>
@@ -328,7 +417,8 @@ function DecisionCard({ rules }: { rules: RulesResult }) {
   );
 }
 
-function EscalationCard({ rules }: { rules: RulesResult }) {
+function EscalationCard({ view }: { view: CaseView }) {
+  const { rules, ai, testCase } = view;
   return (
     <Card
       title="Escalation"
@@ -355,6 +445,11 @@ function EscalationCard({ rules }: { rules: RulesResult }) {
           ))}
         </ul>
       )}
+      <AnswerKeyLine
+        show={!!ai?.extraction}
+        ok={!!ai?.escalateCorrect}
+        expected={testCase.expected.escalate ? "escalate" : "no escalation"}
+      />
     </Card>
   );
 }
