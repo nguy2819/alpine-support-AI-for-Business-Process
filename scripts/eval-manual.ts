@@ -4,7 +4,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { pct } from "../lib/evaluate";
-import { consistencyOf, readRunResults, resultPath, scoreRun } from "../lib/manualEval";
+import { consistencyOf, scoreRun } from "../lib/manualEval";
+import { readRunResults, resultPath } from "../lib/manualResults";
 
 function argValue(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);

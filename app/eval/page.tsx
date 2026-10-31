@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { pct, runRulesEval, type CaseEval } from "@/lib/evaluate";
-import { consistencyOf, FIELD_KEYS, readRunResults, type Consistency, type RunResult } from "@/lib/manualEval";
+import { readRunResults } from "@/lib/manualResults";
+import { ComparisonTable, Mark, WrongCases } from "@/components/run-report";
 
 export const metadata: Metadata = {
   title: "Eval – Alpine Outdoor Support Copilot",
@@ -19,10 +20,6 @@ function Stat({ label, n, total }: { label: string; n: number; total: number }) 
       </p>
     </div>
   );
-}
-
-function Mark({ ok }: { ok: boolean }) {
-  return ok ? <span className="text-emerald-700">✓</span> : <span className="font-semibold text-rose-700">✗</span>;
 }
 
 function ResultsTable({ rows }: { rows: CaseEval[] }) {
@@ -60,119 +57,6 @@ function ResultsTable({ rows }: { rows: CaseEval[] }) {
         </tbody>
       </table>
     </div>
-  );
-}
-
-const ratio = (n: number | null, total: number) => (n === null ? "n/a" : `${pct(n, total)} (${n}/${total})`);
-
-const METRICS: { name: string; value: (r: RunResult, c: Consistency) => string }[] = [
-  { name: "Decision accuracy", value: (r) => ratio(r.decisionCorrect, r.total) },
-  { name: "Escalate accuracy", value: (r) => ratio(r.escalateCorrect, r.total) },
-  { name: "Decision and escalate both correct", value: (r) => ratio(r.bothCorrect, r.total) },
-  { name: "Consistency: decision + escalate", value: (_, c) => ratio(c.decisionConsistent, c.total) },
-  { name: "Consistency: all fields", value: (_, c) => ratio(c.extractionConsistent, c.total) },
-  { name: "Runs in group", value: (_, c) => String(c.runs) },
-  { name: "JSON valid", value: (r) => (r.jsonValid ? "yes" : "NO") + (r.fenced ? " (in a markdown fence)" : "") },
-  { name: "Schema errors (cases)", value: (r) => String(r.schemaErrors) },
-  { name: "Missing cases", value: (r) => String(r.missingCases) },
-  { name: "Unknown case IDs", value: (r) => String(r.unknownCaseIds.length) },
-  { name: "Hallucinations (cases)", value: (r) => String(r.hallucinationCases) },
-];
-
-function ComparisonTable({ runs }: { runs: RunResult[] }) {
-  const consistency = new Map(runs.map((r) => [r.label, consistencyOf(runs.filter((x) => x.group === r.group))]));
-  return (
-    <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-      <table className="w-full text-sm">
-        <thead className="bg-slate-50 text-left text-xs text-slate-500">
-          <tr>
-            <th className="px-3 py-2 tracking-wide uppercase">Metric</th>
-            {runs.map((r) => (
-              <th key={r.label} className="px-3 py-2 font-mono whitespace-nowrap">
-                {r.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-100">
-          {METRICS.map((m) => (
-            <tr key={m.name}>
-              <td className="px-3 py-2 whitespace-nowrap text-slate-600">{m.name}</td>
-              {runs.map((r) => (
-                <td key={r.label} className="px-3 py-2 whitespace-nowrap tabular-nums">
-                  {m.value(r, consistency.get(r.label)!)}
-                </td>
-              ))}
-            </tr>
-          ))}
-          <tr className="bg-slate-50">
-            <td colSpan={runs.length + 1} className="px-3 py-2 text-xs tracking-wide text-slate-500 uppercase">
-              Field accuracy
-            </td>
-          </tr>
-          {FIELD_KEYS.map((f) => (
-            <tr key={f}>
-              <td className="px-3 py-2 font-mono text-xs text-slate-600">{f}</td>
-              {runs.map((r) => (
-                <td key={r.label} className="px-3 py-2 whitespace-nowrap tabular-nums">
-                  {ratio(r.fieldCorrect[f], r.total)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function WrongCases({ run }: { run: RunResult }) {
-  const wrong = run.cases.filter(
-    (c) => !c.decisionCorrect || !c.escalateCorrect || c.wrongFields.length > 0 || c.hallucinations.length > 0,
-  );
-  return (
-    <details className="rounded-lg border border-slate-200 bg-white">
-      <summary className="cursor-pointer px-4 py-2.5 text-sm font-semibold">
-        <span className="font-mono">{run.label}</span>: {wrong.length} case(s) with errors
-      </summary>
-      {run.jsonError && <p className="px-4 pb-2 text-sm text-rose-700">JSON error: {run.jsonError}</p>}
-      {wrong.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] text-sm">
-            <thead className="bg-slate-50 text-left text-xs tracking-wide text-slate-500 uppercase">
-              <tr>
-                <th className="px-3 py-2">Case</th>
-                <th className="px-3 py-2">Decision</th>
-                <th className="px-3 py-2">Escalate</th>
-                <th className="px-3 py-2">Why</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {wrong.map((c) => (
-                <tr key={c.caseId}>
-                  <td className="px-3 py-2 font-mono text-xs font-semibold">{c.caseId}</td>
-                  <td className="px-3 py-2">
-                    <Mark ok={c.decisionCorrect} /> {c.decision ?? "—"}
-                  </td>
-                  <td className="px-3 py-2">
-                    <Mark ok={c.escalateCorrect} /> {c.escalate === null ? "—" : String(c.escalate)}
-                  </td>
-                  <td className="px-3 py-2 font-mono text-xs text-slate-600">
-                    {c.error && <span className="block text-rose-700">{c.error}</span>}
-                    {c.wrongFields.length > 0 && <span className="block">wrong: {c.wrongFields.join(", ")}</span>}
-                    {c.hallucinations.map((h) => (
-                      <span key={h} className="block text-rose-700">
-                        hallucination: {h}
-                      </span>
-                    ))}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </details>
   );
 }
 

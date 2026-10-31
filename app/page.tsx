@@ -1,7 +1,8 @@
 import { CaseWorkspace, type CaseView, type RunViews } from "@/components/case-workspace";
 import { findOrder, referenceExtraction, testCases } from "@/lib/data";
 import { rulesFromExtraction } from "@/lib/evaluate";
-import { readRunResults, type RunResult } from "@/lib/manualEval";
+import type { RunResult } from "@/lib/manualEval";
+import { readRunResults } from "@/lib/manualResults";
 
 function viewsFor(run: RunResult | null): CaseView[] {
   return testCases.map((tc) => {

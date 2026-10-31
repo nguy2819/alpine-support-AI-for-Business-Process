@@ -36,7 +36,7 @@ Nguyên nhân là prompt v1 lúc đó không có danh mục sản phẩm và d�
 
 ### Quyết định
 
-Bỏ gọi API. AI được chạy thủ công trên claude.ai (Project có `policy.md` và `orders.json`), JSON trả về được dán vào `results/raw/` rồi chấm bằng `npm run eval:manual`.
+Bỏ gọi API. AI được chạy thủ công trong cửa sổ chat, với `policy.md` và `orders.json` được upload vào chat. JSON trả về được dán vào trang `/run` để chấm ngay trong trình duyệt, nên team không biết code cũng tự chạy được. Vẫn có thể chấm bằng `npm run eval:manual` nếu muốn lưu kết quả vào repo.
 
 Lý do:
 
@@ -46,7 +46,8 @@ Lý do:
 
 Đánh đổi:
 
-- Mỗi run phải thao tác tay, và kết quả có thể phụ thuộc vào model đang chọn trên claude.ai.
+- Mỗi run phải thao tác tay, và kết quả có thể phụ thuộc vào công cụ và model đang chọn.
+- Đáp án nằm trong code gửi xuống trình duyệt để `/run` chấm được mà không cần server. Người cố tình tìm có thể đọc được, điều này chấp nhận được vì dữ liệu là giả.
 - AI có thể dùng thông tin giữa các case trong cùng một lần chạy, vì 25 case được gửi chung. Đây là khác biệt so với gọi API từng case.
 - Sản phẩm chưa có bước trích xuất tự động: kết quả là đánh giá prompt, không phải một pipeline chạy thật.
 

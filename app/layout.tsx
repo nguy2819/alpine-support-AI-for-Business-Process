@@ -37,7 +37,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 Cases
               </Link>
               <Link href="/eval" className="rounded-md px-3 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
-                Rules eval
+                Eval
+              </Link>
+              <Link href="/run" className="rounded-md px-3 py-1.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+                Run eval
               </Link>
             </nav>
           </div>
