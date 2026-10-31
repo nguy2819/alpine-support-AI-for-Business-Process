@@ -22,7 +22,7 @@ Pattern: **the system suggests, a human decides.** The AI never sends replies or
 | `lib/extractSchema.ts` | Zod schema for the AI extraction |
 | `lib/manualEval.ts` | Scores pasted AI output (browser-safe): validation, hallucination checks, accuracy, consistency |
 | `lib/manualResults.ts` | Reads and writes saved results (server only) |
-| `prompts/extract_v1.txt`, `prompts/extract_v2.txt` | Project instructions for claude.ai (simple and improved) |
+| `prompts/extract_v1.txt`, `prompts/extract_v2.txt` | Prompts for the AI chat (simple and improved) |
 | `manual/cases_for_ai.txt` | The 25 messages for the AI, without answers |
 | `scripts/eval-manual.ts` | Scores one pasted run and saves it |
 | `results/raw/<label>.json` | AI output exactly as pasted |
@@ -44,10 +44,10 @@ npm run build
 
 ## Manual AI runs
 
-Anyone can run an evaluation in the browser at , with no install: it provides the prompts and files, and scores the pasted AI reply in the browser. Nothing is stored, so download the CSV to keep results.
+Anyone can run an evaluation in the browser at `/run`, with no install: it provides the prompts and files, and scores the pasted AI reply in the browser. Nothing is stored, so download the CSV to keep results.
 
-To publish a run on  and , save the reply to , run , and commit . Those pages read  when the app is built.
+To publish a run on `/` and `/eval`, save the reply to `results/raw/<label>.json`, run `npm run eval:manual`, and commit `results/`. Those pages read `results/*.json` when the app is built.
 
-Labels ending in , , ... form one group, which is how consistency is measured.
+Labels ending in `-run1`, `-run2`, ... form one group, which is how consistency is measured.
 
-The answer key ships in the browser code so  can score without a server. This is fine for a mock dataset, but anyone determined can read it.
+The answer key ships in the browser code so `/run` can score without a server. This is fine for a mock dataset, but anyone determined can read it.
